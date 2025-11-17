@@ -20,7 +20,7 @@ process PACBIO_CUTADAPT {
     script:
     maxN = params.maxN >=0 ? "--max-n ${params.maxN}" : ""
     maxEE = "--max-ee ${[params.maxEE_for,params.maxEE_rev].max()}"
-    strictness = params.pacbio_strict_match ? '-g' : '-a'
+    strictness = params.cutadapt_strict_match ? '-g' : '-a'
     min_len = params.min_read_len ? "-m ${params.min_read_len}" : "-m 50" 
     max_len = params.max_read_len != "Inf" ? "-M ${params.max_read_len}" : ""
     """

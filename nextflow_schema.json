@@ -288,11 +288,6 @@
         }
     ],
     "properties": {
-        "pacbio_strict_match": {
-            "type": "boolean",
-            "default": true,
-            "description": "PacBio `cutadapt`.  Whether both primers need to be required ('True', default) or only one primer ('False')"
-        },
         "trim_for": {
             "type": "integer",
             "default": 0,
@@ -607,6 +602,13 @@
         },
         "learnerrors_quality_bins": {
             "type": "string"
+        },
+        "cutadapt_strict_match": {
+            "type": "boolean",
+            "default": true
+        },
+        "cutadapt_dovetail": {
+            "type": "boolean"
         }
     }
 }

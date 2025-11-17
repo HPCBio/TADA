@@ -20,6 +20,7 @@ process DADA2_LEARN_ERRORS {
     def args = task.ext.args ?: ''
     def prefix = task.ext.prefix
     def derepreads = 100000
+    def rm = readmode == "R1" ? "1" : "2"
     """
     #!/usr/bin/env Rscript
     suppressPackageStartupMessages({
@@ -48,7 +49,7 @@ process DADA2_LEARN_ERRORS {
     }
 
     # File parsing
-    filts <- list.files('.', pattern=paste0("${readmode}",".filtered.fastq.gz"), full.names = TRUE)
+    filts <- list.files('.', pattern=paste0("${rm}",".trim.fastq.gz"), full.names = TRUE)
 
     set.seed(${params.random_seed})
 

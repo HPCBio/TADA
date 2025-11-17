@@ -74,7 +74,7 @@ process PACBIO_CUTADAPT_FILTER_AND_TRIM {
     !(params.precheck)
 
     script:
-    strictness = params.pacbio_strict_match ? '-g' : '-a'
+    strictness = params.cutadapt_strict_match ? '-g' : '-a'
     """
     # Logic: we should trim out the HiFi reads and require *both* primers be present (-g).
     # This should also reorient the sequence to match the primers (--rc).
@@ -139,75 +139,3 @@ process PACBIO_DADA2_FILTER_AND_TRIM {
     touch ${prefix}.trimmed.txt
     """
 }
-
-// // this path is only needed when using variable length sequences
-// process ITSFilterAndTrimStep1 {
-//     tag { "ITS_Step1_${meta.id}" }
-
-//     input:
-//     tuple val(meta), file(reads) from dada2ReadPairs
-
-//     output:
-//     tuple val(meta), file("${meta.id}.R[12].noN.fastq.gz") optional true into itsStep2
-//     tuple val(meta), file("${meta.id}.out.RDS") into itsStep3Trimming  // needed for join() later
-//     file('forward_rc') into forwardP
-//     // TODO make this optional if data are SE
-//     file('reverse_rc') into reverseP
-
-//     when:
-//     !(params.precheck)
-
-//     script:
-//     template "ITSFilterAndTrimStep1.R"
-// }
-
-// process ITSFilterAndTrimStep2 {
-//     tag { "ITS_Step2_${meta.id}" }
-//     publishDir "${params.outdir}/dada2-FilterAndTrim", mode: "copy", overwrite: true
-
-//     input:
-//     tuple(meta), file(reads) from itsStep2
-//     file(forP) from forwardP
-//     file(revP) from reverseP
-    
-//     output:
-//     tuple val(meta), file("${meta.id}.R[12].cutadapt.fastq.gz") optional true into itsStep3
-//     file("*.cutadapt.out") into cutadaptToMultiQC
-
-//     when:
-//     !(params.precheck)
-
-//     script:
-//     outr2 = meta.single_end ? '' : "-p ${meta.id}.R2.cutadapt.fastq.gz"
-//     p2 = meta.single_end ? '' : "-G ${params.revprimer} -A \$REV_PRIMER"
-//     """
-//     FWD_PRIMER=\$(<forward_rc)
-//     REV_PRIMER=\$(<reverse_rc)
-    
-//     cutadapt -g ${params.fwdprimer} -a \$FWD_PRIMER ${p2} \\
-//         --cores ${task.cpus} \\
-//         -n 2 \\
-//         -o ${meta.id}.R1.cutadapt.fastq.gz ${outr2} \\
-//         ${reads} > ${meta.id}.cutadapt.out
-//     """
-// }
-
-// process ITSFilterAndTrimStep3 {
-//     tag { "ITS_Step3_${meta.id}" }
-//     publishDir "${params.outdir}/dada2-FilterAndTrim", mode: "copy", overwrite: true
-
-//     input:
-//     tuple val(meta), file(reads), file(trimming) from itsStep3.join(itsStep3Trimming)
-
-//     output:
-//     tuple val(meta), file("${meta.id}.R1.filtered.fastq.gz") optional true into filteredReadsR1
-//     tuple val(meta), file("${meta.id}.R2.filtered.fastq.gz") optional true into filteredReadsR2
-//     tuple val(meta), file("${meta.id}.R[12].filtered.fastq.gz") optional true into readsToFastQC,readsToPerSample
-//     file "*.trimmed.txt" into trimTracking
-
-//     when:
-//     !(params.precheck)
-
-//     script:
-//     template "ITSFilterAndTrimStep3.R"
-// }

@@ -12,8 +12,6 @@ workflow QUALITY_CONTROL {
     main:
     ch_versions = Channel.empty()
 
-    ch_readtracking.dump()
-
     READ_TRACKING(
         ch_readtracking.collect()
     )

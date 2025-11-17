@@ -42,11 +42,11 @@ process MERGE_TRIM_TABLES {
         }
 
         # gather files and load
-        cutadapt_files <- list.files(path = ".", pattern = "*.cutadapt.out")
+        cutadapt_files <- list.files(path = ".", pattern = "*.cutadapt.log")
         cutadapt_sample_data <- lapply(cutadapt_files, read_cutadapt)
 
         # fix sample names
-        nms <- gsub(".cutadapt.out", "", cutadapt_files)
+        nms <- gsub(".cutadapt.log", "", cutadapt_files)
         names(cutadapt_sample_data) <- nms
 
         # only keep some data

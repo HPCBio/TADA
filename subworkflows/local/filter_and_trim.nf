@@ -1,7 +1,8 @@
 include { ILLUMINA_DADA2_FILTER_AND_TRIM   } from '../../modules/local/illumina_filterandtrim'
 include { PACBIO_DADA2_FILTER_AND_TRIM     } from '../../modules/local/pacbio_filterandtrim'
-include { ILLUMINA_CUTADAPT                } from '../../modules/local/illumina_cutadapt'
-include { PACBIO_CUTADAPT                  } from '../../modules/local/pacbio_cutadapt'
+include { CUTADAPT as SHORT_READ_CUTADAPT  } from '../../modules/nf-core/cutadapt'
+// include { ILLUMINA_CUTADAPT as PAIRED_END_CUTADAPT  } from '../../modules/local/illumina_cutadapt'
+include { CUTADAPT as LONG_READ_CUTADAPT   } from '../../modules/nf-core/cutadapt'
 include { MERGE_TRIM_TABLES                } from '../../modules/local/mergetrimtables'
 
 workflow FILTER_AND_TRIM {
@@ -10,6 +11,7 @@ workflow FILTER_AND_TRIM {
     ch_input
 
     main:
+    ch_versions = Channel.empty() 
     ch_reports = Channel.empty()
     ch_trimmed = Channel.empty()
     ch_trimmed_R1 = Channel.empty()
@@ -31,7 +33,7 @@ workflow FILTER_AND_TRIM {
     def trimmer = params.platform == "pacbio" ? "cutadapt" : params.trimmer
     if (params.platform == "pacbio") {
 
-        PACBIO_CUTADAPT(
+        LONG_READ_CUTADAPT(
             ch_input,
             params.for_primer,
             rev_primer_rc
@@ -53,16 +55,27 @@ workflow FILTER_AND_TRIM {
             ch_trimmed = ILLUMINA_DADA2_FILTER_AND_TRIM.out.trimmed
             ch_reports = ILLUMINA_DADA2_FILTER_AND_TRIM.out.trimmed_report.collect()
         } else if (trimmer == "cutadapt") {
-            ILLUMINA_CUTADAPT(
-                ch_input,
-                params.for_primer,
-                params.rev_primer,
-                for_primer_rc,
-                rev_primer_rc
+
+            // this currently requires passing in the primers via meta 
+            // for each sample
+            SHORT_READ_CUTADAPT(
+                ch_input
+                .map { meta, reads -> 
+                    [  
+                    [ id:         meta.id, 
+                      single_end: meta.single_end,
+                      for:        params.for_primer, 
+                      rev:        params.rev_primer,
+                      for_rc:     for_primer_rc,
+                      rev_rc:     rev_primer_rc],
+                      reads
+                    ]
+                    }
             )
-            ch_trimmed = ILLUMINA_CUTADAPT.out.trimmed
-            ch_reports = ILLUMINA_CUTADAPT.out.trimmed_report.collect()
-            ch_multiqc_files = ch_multiqc_files.mix(ILLUMINA_CUTADAPT.out.cutadapt_json)
+            ch_trimmed = SHORT_READ_CUTADAPT.out.reads
+            ch_reports = SHORT_READ_CUTADAPT.out.log.collect{it[1]}
+            // ch_multiqc_files = ch_multiqc_files.mix(SHORT_READ_CUTADAPT.out.log.collect{it[1]})
+            ch_versions = ch_versions.mix(SHORT_READ_CUTADAPT.out.versions)
         }
     }
 
@@ -74,6 +87,7 @@ workflow FILTER_AND_TRIM {
     emit:
     trimmed_report = MERGE_TRIM_TABLES.out.trimmed_report // channel: [ RDS ]
     trimmed = ch_trimmed
+    versions = ch_versions
     ch_multiqc_files
 }
 
