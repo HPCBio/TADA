@@ -1,7 +1,6 @@
 include { ILLUMINA_DADA2_FILTER_AND_TRIM   } from '../../modules/local/illumina_filterandtrim'
 include { PACBIO_DADA2_FILTER_AND_TRIM     } from '../../modules/local/pacbio_filterandtrim'
 include { CUTADAPT as SHORT_READ_CUTADAPT  } from '../../modules/nf-core/cutadapt'
-// include { ILLUMINA_CUTADAPT as PAIRED_END_CUTADAPT  } from '../../modules/local/illumina_cutadapt'
 include { CUTADAPT as LONG_READ_CUTADAPT   } from '../../modules/nf-core/cutadapt'
 include { MERGE_TRIM_TABLES                } from '../../modules/local/mergetrimtables'
 
@@ -34,9 +33,18 @@ workflow FILTER_AND_TRIM {
     if (params.platform == "pacbio") {
 
         LONG_READ_CUTADAPT(
-            ch_input,
-            params.for_primer,
-            rev_primer_rc
+            ch_input
+                .map { meta, reads -> 
+                    [  
+                    [ id:         meta.id, 
+                      single_end: meta.single_end,
+                      for:        params.for_primer, 
+                      rev:        params.rev_primer,
+                      for_rc:     for_primer_rc,
+                      rev_rc:     rev_primer_rc],
+                      reads
+                    ]
+                    }
         )
 
         // TODO: this could be modified/split into a `DADA2`-only step
