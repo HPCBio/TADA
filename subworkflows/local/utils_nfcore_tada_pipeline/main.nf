@@ -151,7 +151,8 @@ workflow PIPELINE_COMPLETION {
 // Check and validate pipeline parameters
 //
 def validateInputParameters() {
-    genomeExistsError()
+    // TODO: move input checking here
+    // genomeExistsError()
 }
 //
 // Validate channels from input samplesheet
@@ -190,7 +191,8 @@ def genomeExistsError() {
             "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
         error(error_string)
     }
-}//
+}
+//
 // Generate methods description for MultiQC
 //
 def toolCitationText() {
