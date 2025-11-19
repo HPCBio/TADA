@@ -2,7 +2,7 @@
 if (!require("BiocManager", quietly = TRUE))
     install.packages("BiocManager")
 ## update installed packages
-BiocManager::install(version = "3.21")
+BiocManager::install(version = "3.22", ask = FALSE)
 
 pkgs <- c(
   "RCurl",
