@@ -51,9 +51,11 @@ workflow FILTER_AND_TRIM {
         // PACBIO_DADA2_FILTER_AND_TRIM(
         //     PACBIO_CUTADAPT.out.cutadapt_trimmed
         // )
-        ch_trimmed = PACBIO_CUTADAPT.out.trimmed
-        ch_reports = PACBIO_CUTADAPT.out.trimmed_report.collect()
-        ch_multiqc_files = ch_multiqc_files.mix(PACBIO_CUTADAPT.out.cutadapt_json)
+        ch_trimmed = LONG_READ_CUTADAPT.out.reads
+        ch_reports = LONG_READ_CUTADAPT.out.log.collect{it[1]}
+        // ch_multiqc_files = ch_multiqc_files.mix(LONG_READ_CUTADAPT.out.cutadapt_json)
+        ch_versions = ch_versions.mix(LONG_READ_CUTADAPT.out.versions)
+
     } else {
         // this handles both paired and single-end data
         if (trimmer == "dada2") {

@@ -8,7 +8,7 @@ process ILLUMINA_DADA2_FILTER_AND_TRIM {
     tuple val(meta), path(reads)
 
     output:
-    tuple val(meta), path("${meta.id}.R[12].filtered.fastq.gz"), optional: true, emit: trimmed
+    tuple val(meta), path("${meta.id}.R[12].trim.fastq.gz"), optional: true, emit: trimmed
     path("*.trimmed.txt"), emit: trimmed_report
 
     when:
@@ -22,9 +22,9 @@ process ILLUMINA_DADA2_FILTER_AND_TRIM {
     suppressPackageStartupMessages(library(dada2))
 
     out <- filterAndTrim(fwd        = "${reads[0]}",
-                        filt        = "${meta.id}.R1.filtered.fastq.gz",
+                        filt        = "${meta.id}.R1.trim.fastq.gz",
                         rev         = if("${reads[1]}" == "null") NULL else "${reads[1]}",
-                        filt.rev    = if("${reads[1]}" == "null") NULL else "${meta.id}.R2.filtered.fastq.gz",
+                        filt.rev    = if("${reads[1]}" == "null") NULL else "${meta.id}.R2.trim.fastq.gz",
                         trimLeft    = if("${reads[1]}" == "null") ${params.trim_for} else  c(${params.trim_for}, ${params.trim_rev}),
                         truncLen    = if("${reads[1]}" == "null") ${params.trunc_for} else c(${params.trunc_for}, ${params.trunc_rev}),
                         maxEE       = if("${reads[1]}" == "null") ${params.maxEE_for} else c(${params.maxEE_for}, ${params.maxEE_rev}), 
@@ -47,8 +47,8 @@ process ILLUMINA_DADA2_FILTER_AND_TRIM {
     def args = task.ext.args ?: ''
     def prefix = task.ext.prefix ?: "${meta.id}"
     """
-    touch ${prefix}.R1.filtered.fastq.gz
-    touch ${prefix}.R2.filtered.fastq.gz
+    touch ${prefix}.R1.trim.fastq.gz
+    touch ${prefix}.R2.trim.fastq.gz
     touch ${prefix}.trimmed.txt
     """
 }

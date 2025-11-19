@@ -35,7 +35,7 @@ process DADA2_REMOVE_CHIMERAS {
 
     # read tracking
     seqtab.nonchim <- rowSums(seqtab)
-    nms <- gsub('.R1.filtered.fastq.gz', '',names(seqtab.nonchim))
+    nms <- gsub('(.R1)?.trim.fastq.gz', '',names(seqtab.nonchim))
     nms <- gsub(".dd\$", "", nms)
     seqtab.nonchim <- as_tibble_col(seqtab.nonchim, column_name = "dada2.nonchim") %>%
       mutate(SampleID = nms, .before = 1)

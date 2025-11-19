@@ -8,7 +8,7 @@ process PACBIO_DADA2_FILTER_AND_TRIM {
     tuple val(meta), path(reads)
 
     output:
-    tuple val(meta), path("${meta.id}.R1.filtered.fastq.gz"), optional: true, emit: trimmed
+    tuple val(meta), path("${meta.id}.R1.trim.fastq.gz"), optional: true, emit: trimmed
     path("*.trimmed.txt"), emit: trimmed_report
 
     when:
@@ -24,7 +24,7 @@ process PACBIO_DADA2_FILTER_AND_TRIM {
     suppressPackageStartupMessages(library(Biostrings))
 
     out2 <- filterAndTrim(fwd = "${reads}",
-                        filt = "${meta.id}.R1.filtered.fastq.gz",
+                        filt = "${meta.id}.R1.trim.fastq.gz",
                         maxEE = ${params.maxEE_for},
                         maxN = ${params.maxN},
                         maxLen = ${params.max_read_len},
@@ -41,8 +41,8 @@ process PACBIO_DADA2_FILTER_AND_TRIM {
     def args = task.ext.args ?: ''
     def prefix = task.ext.prefix ?: "${meta.id}"
     """
-    touch ${prefix}.R1.filtered.fastq.gz
-    touch ${prefix}.R2.filtered.fastq.gz
+    touch ${prefix}.R1.trim.fastq.gz
+    touch ${prefix}.R2.trim.fastq.gz
     touch ${prefix}.trimmed.txt
     """
 }

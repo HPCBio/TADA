@@ -197,7 +197,7 @@ process DADA2_POOLED_SEQTABLE {
 
       mergers_summary <- as.data.frame(sapply(mergers, function(x) sum(getUniques(x %>% filter(accept)))))
       colnames(mergers_summary) <- c("dada2.pooled.merged")
-      nms <- gsub(".R1.filtered.fastq.gz", "", rownames(mergers_summary))
+      nms <- gsub("(.R1)?.trim.fastq.gz", "", rownames(mergers_summary))
       mergers_summary <- mergers_summary %>% 
          as_tibble() %>%
          mutate(SampleID = nms, .before = 1)
@@ -213,8 +213,8 @@ process DADA2_POOLED_SEQTABLE {
    saveRDS(seqtab, "seqtab.full.RDS")
 
    seqtab_stats <- rowSums(seqtab)
-   nms <- gsub(".R1.filtered.fastq.gz", "", names(seqtab_stats))
-   seqtab_stats <- as_tibble_col(seqtab_stats, column_name = "dada.pooled.seqtab.raw") %>%
+   nms <- gsub("(.R1)?.trim.fastq.gz", "", names(seqtab_stats))
+   seqtab_stats <- as_tibble_col(seqtab_stats, column_name = "dada2.pooled.seqtab.raw") %>%
       mutate(SampleID = nms, .before = 1)
 
    write_csv(seqtab_stats, "seqtab.original.pooled.${readmode}.csv")
@@ -232,8 +232,8 @@ process DADA2_POOLED_SEQTABLE {
 
    if (${params.min_asv_len} > 0 | ${params.max_asv_len} > 0) {
       seqtab_stats <- rowSums(seqtab)
-      nms <- gsub(".R1.filtered.fastq.gz", "", names(seqtab_stats))
-      seqtab_stats <- as_tibble_col(seqtab_stats, column_name = "dada.pooled.seqtab.lengthfiltered") %>%
+      nms <- gsub("(.R1)?.trim.fastq.gz", "", names(seqtab_stats))
+      seqtab_stats <- as_tibble_col(seqtab_stats, column_name = "dada2.pooled.seqtab.lengthfiltered") %>%
          mutate(SampleID = nms, .before = 1)
       write_csv(seqtab_stats, "seqtab.${readmode}.lengthfiltered.csv")
    }

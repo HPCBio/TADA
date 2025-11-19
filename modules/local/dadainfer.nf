@@ -66,7 +66,7 @@ process DADA2_POOLED_INFER {
 
     tracking_dds <- as.data.frame(sapply(dds, getN))
     colnames(tracking_dds) <- c("dada2.denoised.pooled.${readmode}")
-    nms <- gsub(".R[12].filtered.fastq.gz", "", rownames(tracking_dds))
+    nms <- gsub("(.R[12])?.trim.fastq.gz", "", rownames(tracking_dds))
     tracking_dds <- tracking_dds %>%
         as_tibble() %>%
         mutate(SampleID = nms, .before = 1)
