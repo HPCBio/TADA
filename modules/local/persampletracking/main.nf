@@ -1,7 +1,7 @@
 process PER_SAMPLE_TRACKING {
     label 'process_single'
 
-    container "ghcr.io/h3abionet/tada:docker-DADA-1.36"
+    container "ghcr.io/hpcbio/tada:docker-DADA-1.36"
 
     input:
     path(dds)

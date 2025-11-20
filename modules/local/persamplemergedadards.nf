@@ -5,7 +5,7 @@
 // 2) to generate prior R1 and R2 (if present) sequences for later
 
 process PER_SAMPLE_MERGE {
-    container "ghcr.io/h3abionet/tada:docker-DADA-1.36"
+    container "ghcr.io/hpcbio/tada:docker-DADA-1.36"
 
     input:
     path(dds)

@@ -3,7 +3,7 @@ process PER_SAMPLE_INFER {
     tag "$meta.id"
     label 'process_medium'
 
-    container "ghcr.io/h3abionet/tada:docker-DADA-1.36"
+    container "ghcr.io/hpcbio/tada:docker-DADA-1.36"
 
     input:
     tuple val(meta), path(dereps)

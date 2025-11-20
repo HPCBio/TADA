@@ -42,7 +42,7 @@ process FILTER_TADA_DATA {
     tag "FILTER_TADA_DATA"
     label 'process_low'
 
-    container "ghcr.io/h3abionet/tada:docker-DADA-1.36"
+    container "ghcr.io/hpcbio/tada:docker-DADA-1.36"
 
     input:
     path(seqtab)

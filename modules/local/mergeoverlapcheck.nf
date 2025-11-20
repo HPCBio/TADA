@@ -2,7 +2,7 @@ process MERGE_OVERLAP_CHECK {
     tag 'Overlap Stats'
     label 'process_single'
 
-    container "ghcr.io/h3abionet/tada:docker-DADA-1.36"
+    container "ghcr.io/hpcbio/tada:docker-DADA-1.36"
 
     input:
     path(logs)

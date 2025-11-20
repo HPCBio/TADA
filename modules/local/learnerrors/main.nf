@@ -2,7 +2,7 @@ process DADA2_LEARN_ERRORS {
     tag "${params.platform} ${params.learnerrors_function} ${readmode}"
     label 'process_medium'
 
-    container "ghcr.io/h3abionet/tada:docker-DADA-1.36"
+    container "ghcr.io/hpcbio/tada:docker-DADA-1.36"
 
     input:
     tuple val(readmode), path(reads)

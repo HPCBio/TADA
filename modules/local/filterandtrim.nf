@@ -2,7 +2,7 @@ process ILLUMINA_DADA2_FILTER_AND_TRIM {
     tag "$meta.id"
     label 'process_medium'
 
-    container "ghcr.io/h3abionet/tada:docker-DADA-1.36"
+    container "ghcr.io/hpcbio/tada:docker-DADA-1.36"
 
     input:
     tuple val(meta), path(reads)
@@ -58,7 +58,7 @@ process ILLUMINA_DADA2_FILTER_AND_TRIM {
 process PACBIO_CUTADAPT_FILTER_AND_TRIM {
     tag { "PacBioTrim_${meta.id}" }
 
-    // container "ghcr.io/h3abionet/tada:docker-DADA-1.36"
+    // container "ghcr.io/hpcbio/tada:docker-DADA-1.36"
 
     input:
     // TODO: Note the channel name here should probably be changed
@@ -95,7 +95,7 @@ process PACBIO_DADA2_FILTER_AND_TRIM {
     tag "$meta.id"
     label 'process_medium'
 
-    container "ghcr.io/h3abionet/tada:docker-DADA-1.36"
+    container "ghcr.io/hpcbio/tada:docker-DADA-1.36"
 
     input:
     tuple val(meta), path(reads)

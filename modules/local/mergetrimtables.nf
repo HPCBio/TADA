@@ -1,7 +1,7 @@
 process MERGE_TRIM_TABLES {
     label 'process_low'
 
-    container "ghcr.io/h3abionet/tada:docker-DADA-1.36"
+    container "ghcr.io/hpcbio/tada:docker-DADA-1.36"
 
     input:
     path(trimData)

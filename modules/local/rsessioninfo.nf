@@ -2,7 +2,7 @@ process SESSION_INFO {
 
     label 'process_low'
 
-    container "ghcr.io/h3abionet/tada:docker-DADA-1.36"
+    container "ghcr.io/hpcbio/tada:docker-DADA-1.36"
 
     output:
     path "sessionInfo.Rmd", emit: session_info

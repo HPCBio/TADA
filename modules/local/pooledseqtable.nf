@@ -2,7 +2,7 @@
 process DADA2_POOLED_SEQTABLE {
    label 'process_medium'
 
-   container "ghcr.io/h3abionet/tada:docker-DADA-1.36"
+   container "ghcr.io/hpcbio/tada:docker-DADA-1.36"
 
    input:
    path(dds)
