@@ -19,7 +19,7 @@ workflow QIIME2_TAXONOMY_CLASSIFIER {
         asvs_fasta, 
         reference 
     )
-    // ch_versions = ch_versions.mix(QIIME2_CLASSIFY.out.versions.first())
+    // ch_versions = ch_versions.mix(QIIME2_FEATURE_CLASSIFIER.out.versions.first())
 
     QIIME2_FEATURE_TO_RDS ( 
       QIIME2_FEATURE_CLASSIFIER.out.taxtab_qiime2_tsv 
