@@ -1,4 +1,4 @@
-process TAXFILTER {
+process DADA2_TAXFILTER {
     tag "tax_filter:${params.tax_filter_rank}"
     label 'process_single'
 
