@@ -1,5 +1,3 @@
-// TODO: still sorting out this module, but it may be broken up
-//       into individual steps to allow for other QIIME2 classfiers
 process QIIME2_FEATURE_CLASSIFIER {
     label 'process_medium'
 
