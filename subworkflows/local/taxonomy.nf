@@ -27,7 +27,7 @@ workflow TAXONOMY {
     // (move from 'generate_outputs')
 
     if (params.tax_assignment_method == 'rdp') {
-        DADA2_TAXONOMY_CLASSIFIER(
+        DADA2_ASSIGN_TAXA_SPECIES(
             ch_readmap_rds,
             ref_file,
             species_file
