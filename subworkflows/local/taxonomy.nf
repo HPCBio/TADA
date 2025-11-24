@@ -1,7 +1,8 @@
 include { DADA2_ASSIGN_TAXA_SPECIES    } from '../../modules/local/assigntaxaspecies'
 include { DADA2_TAXTABLE2TEXT          } from '../../modules/local/taxtable2txt'
-include { TAXFILTER                    } from '../../modules/local/taxfilter'
+include { DADA2_TAXFILTER              } from '../../modules/local/dada2taxfilter'
 include { QIIME2_TAXONOMY_CLASSIFIER   } from '../../subworkflows/local/qiime_assign_taxonomy'
+// include { DADA2_TAXONOMY_CLASSIFIER    } from '../../subworkflows/local/dada2_assign_taxonomy'
 
 workflow TAXONOMY {
     take:
@@ -20,8 +21,13 @@ workflow TAXONOMY {
     ch_readmap_rds = readmap
     ch_seqtab_rds =  seqtab
 
+    // TODO: 
+    // make these both subworkflows, then filter and 
+    // generate the outputs right from these 
+    // (move from 'generate_outputs')
+
     if (params.tax_assignment_method == 'rdp') {
-        DADA2_ASSIGN_TAXA_SPECIES(
+        DADA2_TAXONOMY_CLASSIFIER(
             ch_readmap_rds,
             ref_file,
             species_file
@@ -51,17 +57,28 @@ workflow TAXONOMY {
         //       rank-filtering.
         //       See: https://docs.qiime2.org/2024.10/tutorials/filtering/
 
-        TAXFILTER(
+        // if (params.tax_assignment_method == 'qiime2') {
+        //     QIIME2_TAXFILTER(
+                
+        //     )
+
+        //     ch_taxtab_rds = QIIME2_TAXONOMY_CLASSIFIER.out.taxtab_rds
+        //     ch_taxmetrics_rds =  QIIME2_TAXONOMY_CLASSIFIER.out.metrics_rds
+        // } else {
+
+        DADA2_TAXFILTER(
             ch_readmap_rds,
             ch_seqtab_rds,
             ch_taxtab_rds,
             ch_taxmetrics_rds
         )
-        ch_readmap_rds = TAXFILTER.out.readmap_tax_filtered_rds
-        ch_seqtab_rds = TAXFILTER.out.seqtab_tax_filtered_rds
-        ch_taxtab_rds = TAXFILTER.out.taxtab_tax_filtered_rds
-        ch_taxmetrics_rds = TAXFILTER.out.taxmetrics_tax_filtered_rds
-        ch_readtracking = ch_readtracking.mix(TAXFILTER.out.readtracking)
+        ch_readmap_rds = DADA2_TAXFILTER.out.readmap_tax_filtered_rds
+        ch_seqtab_rds = DADA2_TAXFILTER.out.seqtab_tax_filtered_rds
+        ch_taxtab_rds = DADA2_TAXFILTER.out.taxtab_tax_filtered_rds
+        ch_taxmetrics_rds = DADA2_TAXFILTER.out.taxmetrics_tax_filtered_rds
+        ch_readtracking = ch_readtracking.mix(DADA2_TAXFILTER.out.readtracking)
+
+        // }
     } 
 
     emit:
