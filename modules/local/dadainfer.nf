@@ -51,10 +51,7 @@ process DADA2_POOLED_INFER {
 
     dereps <- lapply(derep_files, readRDS)
 
-    # note this is a bit of a hack, but we want the file name 
-    # included with the name of the derep object. This makes
-    # sure these are in sync if needed later
-    names(dereps) <- sapply(dereps, function(x) { x\$file })
+    names(dereps) <- gsub(".${readmode}.derep.RDS", "", basename(derep_files))
 
     cat(paste0("Denoising ${readmode} reads: pool:", pool, "\\n"))
     dds <- dada(dereps, 
@@ -66,10 +63,9 @@ process DADA2_POOLED_INFER {
 
     tracking_dds <- as.data.frame(sapply(dds, getN))
     colnames(tracking_dds) <- c("dada2.denoised.pooled.${readmode}")
-    nms <- gsub("(.R[12])?.trim.fastq.gz", "", rownames(tracking_dds))
     tracking_dds <- tracking_dds %>%
         as_tibble() %>%
-        mutate(SampleID = nms, .before = 1)
+        mutate(SampleID = rownames(tracking_dds), .before = 1)
     write_csv(tracking_dds, "dada2.denoised.pooled.${readmode}.csv")
     """
 
