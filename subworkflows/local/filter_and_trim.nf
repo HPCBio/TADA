@@ -96,7 +96,7 @@ workflow FILTER_AND_TRIM {
 
     emit:
     trimmed_report = MERGE_TRIM_TABLES.out.trimmed_report // channel: [ RDS ]
-    trimmed = ch_trimmed
+    trimmed = ch_trimmed.filter{ it[0].single_end ? it[1].size() > 40 : it[1][0].size() > 40 }
     versions = ch_versions
     ch_multiqc_files
 }
