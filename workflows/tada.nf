@@ -110,7 +110,7 @@ workflow TADA {
         ch_multiqc_files = ch_multiqc_files.mix(FILTER_AND_TRIM.out.ch_multiqc_files)
         ch_readtracking = ch_readtracking.mix(FILTER_AND_TRIM.out.trimmed_report)
 
-        ch_trimmed = FILTER_AND_TRIM.out.trimmed
+        ch_trimmed = FILTER_AND_TRIM.out.trimmed 
     }
 
     // Most of the DADA2-specific denoising steps are now in subworkflows, 
@@ -195,7 +195,8 @@ workflow TADA {
     QUALITY_CONTROL(
         ch_readtracking,
         // DADA2_DENOISE.out.merged_seqs,
-        ch_filtered_seqtab_rds
+        ch_filtered_seqtab_rds,
+        ch_filtered_asvs
     )
 
     GENERATE_OUTPUT(

@@ -5,6 +5,7 @@ process PLOT_ASV_DIST {
 
     input:
     path(seqtab)
+    path(seqs)
 
     output:
     path("asv-length-distribution.pdf"), emit: length_plot
@@ -18,13 +19,19 @@ process PLOT_ASV_DIST {
     """
     #!/usr/bin/env Rscript
     suppressPackageStartupMessages(library(tidyverse))
+    suppressPackageStartupMessages(library(ShortRead))
 
-    # note this has to be a seqtable with the actual sequences in them 
-    # (e.g. IDs are not transformed to md5 or otherwise)
+    asvs <- readDNAStringSet("${seqs}")
     seqtab <- readRDS("${seqtab}")
 
-    seqlens <- data.frame(seqs = colnames(seqtab), lengths = nchar(colnames(seqtab)))
+    asv_counts <- colSums(seqtab)
 
+    # TODO: we can scale these by counts as well
+    seqlens <- data.frame(seqs = names(asvs), 
+                      lengths = nchar(asvs),
+                      counts = asv_counts[names(asvs)])
+
+    # simple distribution
     gg <- ggplot(seqlens, aes(x = lengths)) + 
         geom_density() + 
         ggtitle("Sequence Length Distribution") + 

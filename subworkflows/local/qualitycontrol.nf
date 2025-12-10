@@ -8,6 +8,7 @@ workflow QUALITY_CONTROL {
     ch_readtracking
     // ch_merged_seqs
     ch_filtered_seqtable
+    ch_filtered_asvs
 
     main:
     ch_versions = Channel.empty()
@@ -21,7 +22,8 @@ workflow QUALITY_CONTROL {
     // )
 
     PLOT_ASV_DIST(
-        ch_filtered_seqtable
+        ch_filtered_seqtable,
+        ch_filtered_asvs
     )
 
     emit:
