@@ -25,9 +25,6 @@ workflow DADA2_DENOISE {
     ch_merged = Channel.empty()
     
     // START: DADA2-specific
-    DADA2_DEREP_SEQS(ch_trimmed)
-
-    ch_dereps = DADA2_DEREP_SEQS.out.derep_rds
 
     // Channel setup
 
@@ -65,6 +62,9 @@ workflow DADA2_DENOISE {
     rev_priors = params.rev_priors ? file(params.rev_priors, checkIfExists: true) : file("${projectDir}/assets/dummy_file")
 
     if (params.pool == "parallel" || params.pool == "parallel-pseudo") {
+        // TODO: this can be removed completely
+        DADA2_DEREP_SEQS(ch_trimmed)
+        ch_dereps = DADA2_DEREP_SEQS.out.derep_rds
         per_sample_errs = ch_errs.map {it -> it[1]}.collect()
         if (params.pool == "parallel") {
             DADA2_PER_SAMPLE_DENOISE(
@@ -122,21 +122,8 @@ workflow DADA2_DENOISE {
         // and this step, which optionally pools them. For really large runs
         // this will use a ton of memory
 
-        ch_dereps_per_read = ch_dereps
-                .map { 
-                    [ 'R1', it[0].single_end ? it[1] : it[1][0] ]
-                }
-                .concat(
-                    ch_dereps
-                        .filter { !it[0].single_end }
-                        .map {
-                            [ 'R2', it[1][1] ]
-                        }
-                )
-                .groupTuple(sort: true)
-
         DADA2_POOLED_DENOISE(
-            ch_errs, ch_dereps_per_read
+            ch_errs, ch_trimmed_per_read
         )
 
         ch_merged = DADA2_POOLED_DENOISE.out.merged_seqs

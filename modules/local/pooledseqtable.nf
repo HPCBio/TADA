@@ -20,7 +20,6 @@ process DADA2_POOLED_SEQTABLE {
    script:
    def args = task.ext.args ?: ''
    def readmode = dds.size() == 2 ? 'merged' : 'R1'
-
    """
    #!/usr/bin/env Rscript
    suppressPackageStartupMessages(library(dada2))
@@ -159,19 +158,13 @@ process DADA2_POOLED_SEQTABLE {
       # will take a fair bit of memory
       
       # File parsing (these come from the process input channel)
-      derep_files_r1 <- list.files('.', pattern="R1.derep.RDS", full.names = TRUE)
-      derepsF <- lapply(derep_files_r1, readRDS)
-      names(derepsF) <- sapply(derepsF, function(x) { x\$file })
+      filtFs <- list.files('.', pattern="_1.trim.fastq.gz", full.names = TRUE)
+      filtRs <- list.files('.', pattern="_2.trim.fastq.gz", full.names = TRUE)
 
       ddRs <- readRDS("all.dd.R2.RDS")
-      
-      # File parsing (these come from the process input channel)
-      derep_files_r2 <- list.files('.', pattern="R2.derep.RDS", full.names = TRUE)
-      derepsR <- lapply(derep_files_r2, readRDS)
-      names(derepsR) <- sapply(derepsR, function(x) { x\$file })
 
       mergers <- if(rescuePairs) {
-         mergePairsRescue(ddFs, derepsF, ddRs, derepsR,
+         mergePairsRescue(ddFs, filtFs, ddRs, filtRs,
           returnRejects = TRUE,
           minOverlap = ${params.min_overlap},
           maxMismatch = ${params.max_mismatch},
@@ -181,7 +174,7 @@ process DADA2_POOLED_SEQTABLE {
           verbose = TRUE
           ) 
          } else {
-         mergePairs(ddFs, derepsF, ddRs, derepsR,
+         mergePairs(ddFs, filtFs, ddRs, filtRs,
           returnRejects = TRUE,
           minOverlap = ${params.min_overlap},
           maxMismatch = ${params.max_mismatch},

@@ -5,7 +5,9 @@ process DADA2_POOLED_INFER {
     container "ghcr.io/hpcbio/tada:docker-DADA-1.36"
 
     input:
-    tuple val(readmode), path(err), path(dereps)
+    tuple val(readmode), path(err), path(filts)
+
+    
 
     output:
     tuple val(readmode), path("all.dd.${readmode}.RDS"), emit: inferred
@@ -18,6 +20,7 @@ process DADA2_POOLED_INFER {
     def args = task.ext.args ?: ''
     def bandsize = params.platform == 'pacbio' ? ', BAND_SIZE=32' : ''
     def dadaOpt = params.dada_opts ? "${params.dada_opts}" : "NA"
+    def trimmode = readmode == "R1" ? "1" : "2"
     """
     #!/usr/bin/env Rscript
     suppressPackageStartupMessages(library(dada2))
@@ -47,14 +50,12 @@ process DADA2_POOLED_INFER {
     }
     
     # File parsing (these come from the process input channel)
-    derep_files <- list.files('.', pattern=paste0("${readmode}",".derep.RDS"), full.names = TRUE)
-
-    dereps <- lapply(derep_files, readRDS)
-
-    names(dereps) <- gsub(".${readmode}.derep.RDS", "", basename(derep_files))
+    filts <- list.files('.', pattern="_${trimmode}.trim.fastq.gz")
+    names(filts) <- gsub("_${trimmode}.trim.fastq.gz", "", filts)
 
     cat(paste0("Denoising ${readmode} reads: pool:", pool, "\\n"))
-    dds <- dada(dereps, 
+
+    dds <- dada(filts, 
       err=err, 
       multithread=${task.cpus}, 
       pool=pool ${bandsize})
