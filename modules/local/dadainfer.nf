@@ -50,8 +50,8 @@ process DADA2_POOLED_INFER {
     }
     
     # File parsing (these come from the process input channel)
-    filts <- list.files('.', pattern="_${trimmode}.trim.fastq.gz")
-    names(filts) <- gsub("_${trimmode}.trim.fastq.gz", "", filts)
+    filts <- list.files('.', pattern="(_${trimmode})?.trim.fastq.gz")
+    names(filts) <- gsub("(_${trimmode})?.trim.fastq.gz", "", filts)
 
     cat(paste0("Denoising ${readmode} reads: pool:", pool, "\\n"))
 
