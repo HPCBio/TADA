@@ -11,9 +11,10 @@ process CUTADAPT {
     tuple val(meta), path(reads)
 
     output:
-    tuple val(meta), path('*.trim.fastq.gz'), emit: reads
-    tuple val(meta), path('*.log')          , emit: log
-    path "versions.yml"                     , emit: versions
+    tuple val(meta), path('*.trim.fastq.gz')        , emit: reads
+    tuple val(meta), path('*.json'), optional: true , emit: json
+    tuple val(meta), path('*.log')                  , emit: log
+    path "versions.yml"                             , emit: versions
 
     when:
     task.ext.when == null || task.ext.when

@@ -1,0 +1,19 @@
+Changes in component 'nf-core/cutadapt'
+'modules/nf-core/cutadapt/environment.yml' is unchanged
+'modules/nf-core/cutadapt/meta.yml' is unchanged
+Changes in 'cutadapt/main.nf':
+--- modules/nf-core/cutadapt/main.nf
++++ modules/nf-core/cutadapt/main.nf
+@@ -12,6 +12,7 @@
+ 
+     output:
+     tuple val(meta), path('*.trim.fastq.gz'), emit: reads
++    tuple val(meta), path('*.json')         , emit: json
+     tuple val(meta), path('*.log')          , emit: log
+     path "versions.yml"                     , emit: versions
+ 
+
+'modules/nf-core/cutadapt/tests/main.nf.test.snap' is unchanged
+'modules/nf-core/cutadapt/tests/nextflow.config' is unchanged
+'modules/nf-core/cutadapt/tests/main.nf.test' is unchanged
+************************************************************
