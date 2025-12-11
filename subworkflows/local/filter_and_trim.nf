@@ -53,7 +53,7 @@ workflow FILTER_AND_TRIM {
         // )
         ch_trimmed = LONG_READ_CUTADAPT.out.reads
         ch_reports = LONG_READ_CUTADAPT.out.log.collect{it[1]}
-        // ch_multiqc_files = ch_multiqc_files.mix(LONG_READ_CUTADAPT.out.cutadapt_json)
+        ch_multiqc_files = ch_multiqc_files.mix(LONG_READ_CUTADAPT.out.json.collect{it[1]})
         ch_versions = ch_versions.mix(LONG_READ_CUTADAPT.out.versions)
 
     } else {
@@ -84,7 +84,7 @@ workflow FILTER_AND_TRIM {
             )
             ch_trimmed = SHORT_READ_CUTADAPT.out.reads
             ch_reports = SHORT_READ_CUTADAPT.out.log.collect{it[1]}
-            // ch_multiqc_files = ch_multiqc_files.mix(SHORT_READ_CUTADAPT.out.log.collect{it[1]})
+            ch_multiqc_files = ch_multiqc_files.mix(SHORT_READ_CUTADAPT.out.json.collect{it[1]})
             ch_versions = ch_versions.mix(SHORT_READ_CUTADAPT.out.versions)
         }
     }
