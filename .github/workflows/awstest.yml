@@ -7,7 +7,7 @@ on:
 jobs:
   run-tower:
     name: Run AWS tests
-    if: github.repository == 'h3abionet/TADA'
+    if: github.repository == 'HPCBio/TADA'
     runs-on: ubuntu-latest
     steps:
       # Launch workflow using Tower CLI tool action
