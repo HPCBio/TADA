@@ -13,18 +13,8 @@ process DADA2_READMAP2ASV {
 
     script:
     def args = task.ext.args ?: ''
-    
     """
-    #!/usr/bin/env Rscript
-    suppressPackageStartupMessages(library(dada2))
-    suppressPackageStartupMessages(library(ShortRead))
-
-    readmap <- readRDS("${readmap}")
-
-    # Generate ASV FASTA
-    asvs <- DNAStringSet(readmap\$seq)
-    names(asvs) <- readmap\$id
-    writeXStringSet(asvs, file="asvs.fna")
+    readmap2asv.R ${readmap}
     """
 
     stub:

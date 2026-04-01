@@ -18,61 +18,18 @@ process DADA2_LEARN_ERRORS {
     // Move platform-specific settings here?
     def args = task.ext.args ?: ''
     def prefix = task.ext.prefix
-    def derepreads = 100000
+    def learnOpts = params.learnerrors_opts ? "--learnerrors_opts '${params.learnerrors_opts}'" : ""
+    def customCode = params.learnerrors_custom_code ? "--custom_code ${params.learnerrors_custom_code}" : ""
     """
-    #!/usr/bin/env Rscript
-    suppressPackageStartupMessages({
-        library(dada2)
-    })
-
-    errFuncName <- "${params.learnerrors_function}"
-    errFunc <- NA
-
-    if (errFuncName == "custom") {
-        source("${params.learnerrors_custom_code}")
-        errFunc <- customErrfun
-    } else if (errFuncName == "makeBinnedQualErrfun") {
-        # TODO: add error checking on the bins
-        errFunc <- makeBinnedQualErrfun(c(${params.learnerrors_quality_bins}))
-    } else {
-        # note lack of quotes
-        errFunc <- ${params.learnerrors_function}
-    }
-
-    # At the moment we're only accepting additional R-based 
-    # functional arguments as a string
-    if (!nzchar("${params.dada_opts}")) {
-        setDadaOpt(${params.dada_opts})
-        cat("dada Options:\\n","${params.dada_opts}","\\n")
-    }
-
-    # File parsing
-    filts <- list.files('.', pattern=".trim.fastq.gz", full.names = TRUE)
-
-    set.seed(${params.random_seed})
-
-    # Learn read error rates
-    err <- learnErrors(filts, 
-        multithread=${task.cpus},
-        errorEstimationFunction=errFunc,
-        verbose=TRUE,
-        ${params.learnerrors_opts})
-
-    # This is a rough correction for NovaSeq binning issues
-    # See https://github.com/h3abionet/TADA/issues/31
-    # Now deprecated in favor of using a standard error function
-
-    if (as.logical("${params.quality_binning}") == TRUE ) {
-        # TODO: this is likely to be deprecated 
-        print("Running binning correction")
-        errs <- t(apply(getErrors(err), 1, function(x) { x[x < x[40]] = x[40]; return(x)} ))
-        err\$err_out <- errs
-    }
-
-    pdf(paste0("${readmode}.",errFuncName,".err.pdf"))
-    plotErrors(err, nominalQ=TRUE)
-    dev.off()
-
-    saveRDS(err, paste0("errors.","${readmode}",".RDS")) 
+    learn_errors.R \\
+        --readmode ${readmode} \\
+        --errfunc ${params.learnerrors_function} \\
+        ${customCode} \\
+        --quality_bins "${params.learnerrors_quality_bins}" \\
+        --dada_opts "${params.dada_opts}" \\
+        ${learnOpts} \\
+        --quality_binning ${params.quality_binning} \\
+        --random_seed ${params.random_seed} \\
+        --ncpus ${task.cpus}
     """
 }

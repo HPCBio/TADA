@@ -18,27 +18,18 @@ process VARIABLEFILTER {
     script:
     def args = task.ext.args ?: ''
     def prefix = task.ext.prefix ?: "${meta.id}"
+    def singleEnd = meta.single_end ? "--single_end TRUE" : ""
     """
-    #!/usr/bin/env Rscript
-    suppressPackageStartupMessages(library(dada2))
-    suppressPackageStartupMessages(library(ShortRead))
-    suppressPackageStartupMessages(library(Biostrings))
-
-    out <- filterAndTrim(fwd = paste0("${meta.id}",".R1.cutadapt.fastq.gz"),
-                        filt = paste0("${meta.id}", ".R1.filtered.fastq.gz"),
-                        rev = if("${reads[1]}" == "null") NULL else paste0("${meta.id}",".R2.cutadapt.fastq.gz"),
-                        filt.rev = if("${reads[1]}" == "null") NULL else paste0("${meta.id}", ".R2.filtered.fastq.gz"),
-                        maxEE = if("${reads[1]}" == "null") ${params.maxEEFor} else c(${params.maxEEFor}, ${params.maxEERev}), 
-                        truncQ = ${params.truncQ},
-                        rm.phix = as.logical(${params.rmPhiX}),
-                        maxLen = ${params.max_read_len},
-                        minLen = ${params.min_read_len},
-                        compress = TRUE,
-                        verbose = TRUE,
-                        multithread = ${task.cpus})
-    #Change input read counts to actual raw read counts
-    colnames(out) <- c('cutadapt', 'filtered')
-    write.csv(out3, paste0("${meta.id}", ".trimmed.txt"))
+    variable_filter.R \\
+        --sample_id ${meta.id} \\
+        ${singleEnd} \\
+        --maxEE_for ${params.maxEEFor} \\
+        --maxEE_rev ${params.maxEERev} \\
+        --truncQ ${params.truncQ} \\
+        --rmPhiX ${params.rmPhiX} \\
+        --max_read_len ${params.max_read_len} \\
+        --min_read_len ${params.min_read_len} \\
+        --ncpus ${task.cpus}
     """
 
     stub:

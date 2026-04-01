@@ -17,26 +17,13 @@ process DADA2_DEREP_SEQS {
     script:
     def args = task.ext.args ?: ''
     def prefix = task.ext.prefix ?: "${meta.id}"
-    def maxrecords = 100000
-    // TODO: maybe we check this status 
+    def rev_arg = meta.single_end ? "" : "--rev ${reads[1]}"
+    // TODO: maybe we check this status
     """
-    #!/usr/bin/env Rscript
-    suppressPackageStartupMessages(library(dada2))
-
-    derepsF <- derepFastq("${reads[0]}", 
-                        n=${maxrecords}, 
-                        verbose=TRUE)
-    derepsF\$file <- basename("${reads[0]}")
-    saveRDS(derepsF, "${meta.id}.R1.derep.RDS")
-
-    if (!as.logical("${meta.single_end}")) {
-        derepsR <- derepFastq("${reads[1]}", 
-                            n=${maxrecords}, 
-                            verbose=TRUE)
-
-        derepsR\$file <- basename("${reads[1]}")
-        saveRDS(derepsR, "${meta.id}.R2.derep.RDS")
-    }
+    dada2_derep_seqs.R \\
+        --fwd ${reads[0]} \\
+        ${rev_arg} \\
+        --sample_id ${meta.id}
     """
 
     stub:

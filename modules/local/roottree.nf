@@ -17,19 +17,10 @@ process ROOT_TREE {
 
     script:
     def args = task.ext.args ?: ''
-    
     """
-    #!/usr/bin/env Rscript
-    suppressPackageStartupMessages(library(phangorn))
-    suppressPackageStartupMessages(library(ape))
-
-    tree <- read.tree(file = "${tree}")
-
-    midtree <- midpoint(tree)
-
-    write.tree(midtree, file = "rooted.${tree_tool}.newick")
-    saveRDS(midtree, "rooted.${tree_tool}.RDS")
-    saveRDS(tree, "unrooted.${tree_tool}.RDS")
+    root_tree.R \\
+        --tree ${tree} \\
+        --tree_tool ${tree_tool}
     """
 
     stub:

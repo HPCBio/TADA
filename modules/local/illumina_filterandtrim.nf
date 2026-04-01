@@ -19,30 +19,25 @@ process ILLUMINA_DADA2_FILTER_AND_TRIM {
     def prefix = task.ext.prefix ?: "${meta.id}"
     def r1prefix = meta.single_end ? "" : "_1"
     def r2prefix = meta.single_end ? "" : "_2"
+    def rev_args = meta.single_end ? "" : "--rev ${reads[1]} --rev_out ${meta.id}${r2prefix}.trim.fastq.gz"
     """
-    #!/usr/bin/env Rscript
-    suppressPackageStartupMessages(library(dada2))
-
-    out <- filterAndTrim(fwd        = "${reads[0]}",
-                        filt        = "${meta.id}${r1prefix}.trim.fastq.gz",
-                        rev         = if("${reads[1]}" == "null") NULL else "${reads[1]}",
-                        filt.rev    = if("${reads[1]}" == "null") NULL else "${meta.id}${r2prefix}.trim.fastq.gz",
-                        trimLeft    = if("${reads[1]}" == "null") ${params.trim_for} else  c(${params.trim_for}, ${params.trim_rev}),
-                        truncLen    = if("${reads[1]}" == "null") ${params.trunc_for} else c(${params.trunc_for}, ${params.trunc_rev}),
-                        maxEE       = if("${reads[1]}" == "null") ${params.maxEE_for} else c(${params.maxEE_for}, ${params.maxEE_rev}), 
-                        truncQ      = ${params.truncQ},
-                        maxN        = ${params.maxN},
-                        rm.phix     = as.logical("${params.rmPhiX}"),
-                        maxLen      = ${params.max_read_len},
-                        minLen      = ${params.min_read_len},
-                        compress    = TRUE,
-                        verbose     = TRUE,
-                        multithread = ${task.cpus}
-                        )
-
-    colnames(out) <- c('input', 'filtered')
-
-    write.csv(out, "${meta.id}.trimmed.txt")
+    illumina_filter_and_trim.R \\
+        --fwd ${reads[0]} \\
+        --fwd_out ${meta.id}${r1prefix}.trim.fastq.gz \\
+        ${rev_args} \\
+        --sample_id ${meta.id} \\
+        --trim_for ${params.trim_for} \\
+        --trim_rev ${params.trim_rev} \\
+        --trunc_for ${params.trunc_for} \\
+        --trunc_rev ${params.trunc_rev} \\
+        --maxEE_for ${params.maxEE_for} \\
+        --maxEE_rev ${params.maxEE_rev} \\
+        --truncQ ${params.truncQ} \\
+        --maxN ${params.maxN} \\
+        --rmPhiX ${params.rmPhiX} \\
+        --max_read_len ${params.max_read_len} \\
+        --min_read_len ${params.min_read_len} \\
+        --ncpus ${task.cpus}
     """
 
     stub:
