@@ -14,17 +14,10 @@ process DECIPHER {
 
     script:
     def args = task.ext.args ?: ''
-    
     """
-    #!/usr/bin/env Rscript
-    suppressPackageStartupMessages(library(dada2))
-    suppressPackageStartupMessages(library(DECIPHER))
-
-    seqs <- readDNAStringSet("${seqs}")
-    alignment <- AlignSeqs(seqs,
-               anchor=NA,
-               processors = ${task.cpus})
-    writeXStringSet(alignment, "asvs.aligned.fna")
+    decipher_align.R \\
+        --seqs ${seqs} \\
+        --ncpus ${task.cpus}
     """
 
     stub:

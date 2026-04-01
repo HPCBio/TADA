@@ -18,22 +18,16 @@ process PER_SAMPLE_MERGE {
     def args = task.ext.args ?: ''
     def prefix = task.ext.prefix ?: "${meta.id}"
     """
-    #!/usr/bin/env Rscript
-    suppressPackageStartupMessages(library(dada2))
-    suppressPackageStartupMessages(library(dplyr))
-
-    ddF <- readRDS("${dds[0]}")
-    ddR <- readRDS("${dds[1]}")
-    derepF <- readRDS("${dereps[0]}")
-    derepR <- readRDS("${dereps[1]}")
-    merger <- mergePairs(ddF, derepF, ddR, derepR,
-        returnRejects = TRUE,
-        minOverlap = ${params.min_overlap},
-        maxMismatch = ${params.max_mismatch},
-        trimOverhang = as.logical("${params.trim_overhang}"),
-        justConcatenate=as.logical("${params.just_concatenate}")
-    )
-
-    saveRDS(merger, paste("${meta.id}.${stage}.merged.RDS", sep="."))
+    per_sample_merge.R \\
+        --dd_fwd ${dds[0]} \\
+        --dd_rev ${dds[1]} \\
+        --derep_fwd ${dereps[0]} \\
+        --derep_rev ${dereps[1]} \\
+        --sample_id ${meta.id} \\
+        --stage ${stage} \\
+        --min_overlap ${params.min_overlap} \\
+        --max_mismatch ${params.max_mismatch} \\
+        --trim_overhang ${params.trim_overhang} \\
+        --just_concatenate ${params.just_concatenate}
     """
 }

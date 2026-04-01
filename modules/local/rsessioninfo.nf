@@ -12,26 +12,8 @@ process SESSION_INFO {
 
     script:
     def args = task.ext.args ?: ''
-    
     """
-    #!/usr/bin/env Rscript
-    pkgs <- c(
-    "RCurl",
-    "tidyverse",
-    "pander",
-    "phangorn",
-    "dplyr",
-    "dada2",
-    "DECIPHER",
-    "digest",
-    "biomformat",
-    "optparse"
-    )
-    lapply(pkgs, require, character.only = TRUE)
-
-    sink('sessionInfo.Rmd')
-    rmd <- pander(sessionInfo(), compact = FALSE)
-    sink()
+    session_info.R
     """
 
     stub:

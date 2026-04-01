@@ -23,72 +23,19 @@ process PER_SAMPLE_INFER {
     script:
     def args = task.ext.args ?: ''
     def prefix = task.ext.prefix ?: "${meta.id}"
-    def dadaOpt = params.dada_opts ? "${params.dada_opts}" : "NA"
-    run_fpriors = fp.size() == 0 ? "FALSE" : "TRUE"
-    run_rpriors = fp.size() == 0 ? "FALSE" : "TRUE"
+    def dadaOpts = params.dada_opts ? "${params.dada_opts}" : ""
+    def revDerep = dereps.size() > 1 ? "--derep_rev ${dereps[1]}" : ""
+    def fwdPriors = fp.size() > 0 ? "--priors_fwd ${fp}" : ""
+    def revPriors = rp.size() > 0 ? "--priors_rev ${rp}" : ""
     """
-    #!/usr/bin/env Rscript
-    suppressPackageStartupMessages(library(dada2))
-    suppressPackageStartupMessages(library(Biostrings))
-    suppressPackageStartupMessages(library(tidyverse))
-
-    set.seed(100)
-
-    getPriors <- function(x) {
-      priors <- readDNAStringSet(x) |> as.vector() |> unname()
-      return(priors)
-    }
-
-    dadaOpt <- "${dadaOpt}"
-
-    if (!is.na(dadaOpt)) {
-      setDadaOpt(${dadaOpt})
-      cat("dada Options:\\n",${dadaOpt},"\\n")
-    }
-
-    cat("Processing:", "${meta.id}", "\\n")
-
-    errF <- readRDS("errors.R1.RDS")
-    derepF <- readRDS("${dereps[0]}")
-
-    # TODO: there is probably a better way of doing this 
-    # when using optparse
-    paramsF <- list(
-        derep=derepF, 
-        err=errF,
-        multithread=${task.cpus},
-        pool=FALSE
-    )
-
-    if (as.logical("${run_fpriors}")) {
-      paramsF\$priors <- getPriors("${fp}")
-    }
-
-    ddF <- do.call(dada, paramsF)
-    saveRDS(ddF, "${meta.id}.dd.${stage}.R1.RDS")
-
-    if (file.exists("errors.R2.RDS")) {
-        errR <- readRDS("errors.R2.RDS")
-        derepR <- readRDS("${dereps[1]}")
-        paramsR <- list(
-            derep=derepR, 
-            err=errR, 
-            multithread=${task.cpus}, 
-            pool=FALSE
-        )
-
-        if (as.logical("${run_rpriors}")) {
-            paramsR\$priors <- getPriors("${rp}")
-        }
-
-        message("DADA2 params, R2:", paramsR, "\\n")
-        ddR <- do.call(dada, paramsR)
-        saveRDS(ddR, "${meta.id}.dd.${stage}.R2.RDS")
-    } else {
-        # yes this is a little silly (it's the same as the dd.R1.RDS above).
-        # But it does make the logical flow through this channel easier
-        # TODO: check this line!!!
-        saveRDS(ddF, paste("${meta.id}.${stage}.R1.RDS", sep="."))
-    }
+    per_sample_infer_derep_merge.R \\
+        --derep_fwd ${dereps[0]} \\
+        ${revDerep} \\
+        --sample_id ${meta.id} \\
+        --stage ${stage} \\
+        ${fwdPriors} \\
+        ${revPriors} \\
+        --dada_opts "${dadaOpts}" \\
+        --ncpus ${task.cpus}
     """
 }
