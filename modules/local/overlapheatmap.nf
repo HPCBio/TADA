@@ -8,8 +8,8 @@ process OVERLAP_HEATMAP {
     path(merged_tables)
 
     output:
-    path("MergedCheck_heatmap.pdf"), emit: overlap_check_pdf
-    path("MergedCheck_heatmap.RDS"), emit: overlap_check_rds
+    path("MergedCheck_heatmap*.pdf"),     emit: overlap_check_pdf
+    path("stats.RDS"), emit: overlap_check_rds
     // path "versions.yml"           , emit: versions
 
     when:
@@ -18,12 +18,13 @@ process OVERLAP_HEATMAP {
     script:
     def args = task.ext.args ?: ''
     """
-    MergeCheck_Plot.R
+    MergeCheck_Plot.R --forward ${params.for_primer} --reverse ${params.rev_primer}
     """
 
     stub:
     def args = task.ext.args ?: ''
     
     """
+    touch 
     """
 }
