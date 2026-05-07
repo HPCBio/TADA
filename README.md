@@ -1,11 +1,11 @@
-[![GitHub Actions CI Status](https://github.com/h3abionet/TADA/actions/workflows/ci.yml/badge.svg)](https://github.com/h3abionet/TADA/actions/workflows/ci.yml)
-[![GitHub Actions Linting Status](https://github.com/h3abionet/TADA/actions/workflows/linting.yml/badge.svg)](https://github.com/h3abionet/TADA/actions/workflows/linting.yml)[![AWS CI](https://img.shields.io/badge/CI%20tests-full%20size-FF9900?labelColor=000000&logo=Amazon%20AWS)](https://nf-co.re/tada/results)[![Cite with Zenodo](http://img.shields.io/badge/DOI-10.5281/zenodo.XXXXXXX-1073c8?labelColor=000000)](https://doi.org/10.5281/zenodo.XXXXXXX)
+[![GitHub Actions CI Status](https://github.com/HPCBio/TADA/actions/workflows/ci.yml/badge.svg)](https://github.com/HPCBio/TADA/actions/workflows/ci.yml)
+[![GitHub Actions Linting Status](https://github.com/HPCBio/TADA/actions/workflows/linting.yml/badge.svg)](https://github.com/HPCBio/TADA/actions/workflows/linting.yml)[![AWS CI](https://img.shields.io/badge/CI%20tests-full%20size-FF9900?labelColor=000000&logo=Amazon%20AWS)](https://nf-co.re/tada/results)[![Cite with Zenodo](http://img.shields.io/badge/DOI-10.5281/zenodo.XXXXXXX-1073c8?labelColor=000000)](https://doi.org/10.5281/zenodo.XXXXXXX)
 
 <!-- [![Nextflow](https://img.shields.io/badge/nextflow%20DSL2-%E2%89%A523.04.0-23aa62.svg)](https://www.nextflow.io/) -->
 <!-- [![run with conda](http://img.shields.io/badge/run%20with-conda-3EB049?labelColor=000000&logo=anaconda)](https://docs.conda.io/en/latest/) -->
 <!-- [![run with docker](https://img.shields.io/badge/run%20with-docker-0db7ed?labelColor=000000&logo=docker)](https://www.docker.com/) -->
 <!-- [![run with singularity](https://img.shields.io/badge/run%20with-singularity-1d355c.svg?labelColor=000000)](https://sylabs.io/docs/) -->
-<!-- [![Launch on Nextflow Tower](https://img.shields.io/badge/Launch%20%F0%9F%9A%80-Nextflow%20Tower-%234256e7)](https://tower.nf/launch?pipeline=https://github.com/h3abionet/TADA) -->
+<!-- [![Launch on Nextflow Tower](https://img.shields.io/badge/Launch%20%F0%9F%9A%80-Nextflow%20Tower-%234256e7)](https://tower.nf/launch?pipeline=https://github.com/HPCBio/TADA) -->
 
 ## Introduction
 
@@ -47,7 +47,7 @@ Now, you can run the pipeline using:
 <!-- TODO nf-core: update the following command to include all required parameters for a minimal example -->
 
 ```bash
-nextflow run h3abionet/TADA \
+nextflow run HPCBio/TADA \
    -profile <docker/singularity/.../institute> \
    --input samplesheet.csv \
    --outdir <OUTDIR>
@@ -67,7 +67,7 @@ For more details about the output files and reports, please refer to the
 
 ## Credits
 
-h3abionet/TADA was originally written by Chris Fields.
+HPCBio/TADA was originally written by Chris Fields.
 
 We thank the following people for their extensive assistance in the development of this pipeline:
 

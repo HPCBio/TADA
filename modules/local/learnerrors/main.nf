@@ -59,7 +59,7 @@ process DADA2_LEARN_ERRORS {
         ${params.learnerrors_opts})
 
     # This is a rough correction for NovaSeq binning issues
-    # See https://github.com/h3abionet/TADA/issues/31
+    # See https://github.com/HPCBio/TADA/issues/31
     # Now deprecated in favor of using a standard error function
 
     if (as.logical("${params.quality_binning}") == TRUE ) {

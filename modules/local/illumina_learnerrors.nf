@@ -45,7 +45,7 @@ process ILLUMINA_DADA2_LEARN_ERRORS {
     err <- learnErrors(dereps, multithread=${task.cpus}, verbose=1)
 
     # This is a rough correction for NovaSeq binning issues
-    # See https://github.com/h3abionet/TADA/issues/31, we'll likely
+    # See https://github.com/HPCBio/TADA/issues/31, we'll likely
     # add alternatives here soon
 
     if (as.logical("${params.quality_binning}") == TRUE ) {

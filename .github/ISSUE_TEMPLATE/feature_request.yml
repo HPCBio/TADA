@@ -1,5 +1,5 @@
 name: Feature request
-description: Suggest an idea for the h3abionet/TADA pipeline
+description: Suggest an idea for the HPCBio/TADA pipeline
 labels: enhancement
 body:
   - type: textarea
