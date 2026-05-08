@@ -93,9 +93,9 @@ workflow DADA2_DENOISE {
             rnd1_for_priors = DADA2_PER_SAMPLE_DENOISE_ROUND1.out.for_priors
             rnd1_rev_priors = DADA2_PER_SAMPLE_DENOISE_ROUND1.out.rev_priors
             ch_readtracking = ch_readtracking.mix(DADA2_PER_SAMPLE_DENOISE_ROUND1.out
-                    .inferred
-                    .map { it[1] } 
+                    .readtracking
                     .collect())
+
             ch_versions = ch_versions.mix(DADA2_PER_SAMPLE_DENOISE_ROUND1.out.versions)
             
             // Round 2, using priors from round 1 but same error models and dereps
@@ -109,6 +109,9 @@ workflow DADA2_DENOISE {
             ch_filtered_seqtab = DADA2_PER_SAMPLE_DENOISE_ROUND2.out.filtered_seqtable
             rnd2_for_priors = DADA2_PER_SAMPLE_DENOISE_ROUND2.out.for_priors
             rnd2_rev_priors = DADA2_PER_SAMPLE_DENOISE_ROUND2.out.rev_priors
+            ch_readtracking = ch_readtracking.mix(DADA2_PER_SAMPLE_DENOISE_ROUND2.out
+                    .readtracking
+                    .collect())
             ch_versions = ch_versions.mix(DADA2_PER_SAMPLE_DENOISE_ROUND2.out.versions)
         }
     } else {
