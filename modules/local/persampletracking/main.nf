@@ -23,7 +23,7 @@ process PER_SAMPLE_TRACKING {
     #!/usr/bin/env Rscript
     suppressPackageStartupMessages(library(dada2))
     suppressPackageStartupMessages(library(ShortRead))
-    suppressPackageStartupMessages(library(openssl))
+    suppressPackageStartupMessages(library(digest))
     suppressPackageStartupMessages(library(tidyverse))
 
     dadaOpt <- "${dadaOpt}"
@@ -58,7 +58,7 @@ process PER_SAMPLE_TRACKING {
         pseudo_priors <- colnames(st)[colSums(st>0) >= opts\$PSEUDO_PREVALENCE | colSums(st) >= opts\$PSEUDO_ABUNDANCE]
         if (length(pseudo_priors) > 0) {
             ids <- switch(idtype, simple=paste("priorF_", 1:length(pseudo_priors), sep = ""),
-                                    md5=md5(pseudo_priors))
+                                    md5=vapply(pseudo_priors, digest, "", algo="md5", serialize = FALSE))
             seqs.dna <- ShortRead(sread = DNAStringSet(pseudo_priors), id = BStringSet(ids))
             return(seqs.dna)
         } else {

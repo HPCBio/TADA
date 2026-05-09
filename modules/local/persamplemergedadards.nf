@@ -25,7 +25,7 @@ process PER_SAMPLE_MERGE {
     #!/usr/bin/env Rscript
     suppressPackageStartupMessages(library(dada2))
     suppressPackageStartupMessages(library(ShortRead))
-    suppressPackageStartupMessages(library(openssl))
+    suppressPackageStartupMessages(library(digest))
 
     dadaOpt <- "${dadaOpt}"
 
@@ -45,7 +45,7 @@ process PER_SAMPLE_MERGE {
         pseudo_priors <- colnames(st)[colSums(st>0) >= opts\$PSEUDO_PREVALENCE | colSums(st) >= opts\$PSEUDO_ABUNDANCE]
         if (length(pseudo_priors) > 0) {
             ids <- switch(idtype, simple=paste("priorF_", 1:length(pseudo_priors), sep = ""),
-                                    md5=md5(pseudo_priors))
+                                    md5=vapply(colnames(st.raw), digest, "", algo="md5", serialize = FALSE))
             seqs.dna <- ShortRead(sread = DNAStringSet(pseudo_priors), id = BStringSet(ids))
             return(seqs.dna)
         } else {

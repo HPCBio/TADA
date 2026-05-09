@@ -35,9 +35,9 @@ process RENAME_ASVS {
 
     # get IDs based on idType
     ids_study <- switch("${params.id_type}", simple=paste("ASV", 1:ncol(st), sep = ""),
-                                md5=sapply(colnames(st), digest, algo="md5"))
+                                md5=vapply(colnames(st), digest, "", algo="md5", serialize = FALSE))
     ids_study.raw <- switch("${params.id_type}", simple=paste("ASV", 1:ncol(st.raw), sep = ""),
-                                md5=sapply(colnames(st.raw), digest, algo="md5"))
+                                md5=vapply(colnames(st.raw), digest, "", algo="md5", serialize = FALSE))
 
     # sub IDs
     colnames(st) <- unname(ids_study)
