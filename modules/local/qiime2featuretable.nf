@@ -1,14 +1,15 @@
 process QIIME2_FEATURETABLE {
 
-    container "quay.io/qiime2/amplicon:2026.1"
+    container "quay.io/qiime2/qiime2:2026.7"
     
     input:
     path(seqtab)
 
     output:
-    path("seqtab.qza"), emit: seqtab_qza
-    path("seqtab.qzv"), emit: seqtab_qzv
-    path("versions.yml"), emit: versions
+    path("seqtab.qza"),       emit: seqtab_qza
+    path("*frequencies.qza"), emit: freqs_qza
+    path("seqtab.qzv"),       emit: seqtab_qzv
+    path("versions.yml"),     emit: versions
 
     when:
     task.ext.when == null || task.ext.when 
@@ -29,7 +30,9 @@ process QIIME2_FEATURETABLE {
 
     qiime feature-table summarize \
       --i-table seqtab.qza \
-      --o-visualization seqtab.qzv
+      --o-feature-frequencies feature-frequencies.qza \
+      --o-sample-frequencies sample-frequencies.qza \
+      --o-summary seqtab.qzv
 
     # TODO: we don't include metadata yet
     # --m-sample-metadata-file sample-metadata.tsv
