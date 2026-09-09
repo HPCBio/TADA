@@ -1,6 +1,6 @@
 process QIIME2_TAXTABLE {
 
-    container "quay.io/qiime2/amplicon:2025.7"
+    container "quay.io/qiime2/amplicon:2026.1"
     
     input:
     path(taxtab)

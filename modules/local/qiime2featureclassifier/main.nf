@@ -1,7 +1,7 @@
 process QIIME2_FEATURE_CLASSIFIER {
     label 'process_medium'
 
-    container "quay.io/qiime2/amplicon:2025.7"
+    container "quay.io/qiime2/amplicon:2026.1"
 
     input:
     path(asvs)

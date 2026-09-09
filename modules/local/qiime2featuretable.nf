@@ -1,6 +1,6 @@
 process QIIME2_FEATURETABLE {
 
-    container "quay.io/qiime2/amplicon:2025.7"
+    container "quay.io/qiime2/amplicon:2026.1"
     
     input:
     path(seqtab)
